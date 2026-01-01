@@ -1,0 +1,521 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+
+    <!-- Boxicons CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="{% static 'weather_forecast/css/style.css' %}">
+
+    <style>
+        :root {
+            --primary-color: #2d82b5;
+            --secondary-color: #42b0d1;
+            --accent-color: #88d9e6;
+            --dark-color: #015c92;
+            --light-color: #f1faff;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --header-color: #0a2e59; /* New darker blue header color */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #88d9e6, #2d82b5);
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: cloud-float linear infinite;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .cloud1 {
+            width: 120px;
+            height: 40px;
+            top: 10%;
+            left: -120px;
+            animation-duration: 30s;
+        }
+
+        .cloud1::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 20px;
+        }
+
+        .cloud1::after {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            left: 60px;
+        }
+
+        .cloud2 {
+            width: 160px;
+            height: 50px;
+            top: 30%;
+            left: -160px;
+            animation-duration: 35s;
+            animation-delay: 5s;
+        }
+
+        .cloud2::before {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            left: 25px;
+        }
+
+        .cloud2::after {
+            width: 100px;
+            height: 100px;
+            top: -50px;
+            left: 80px;
+        }
+
+        .cloud3 {
+            width: 140px;
+            height: 45px;
+            top: 60%;
+            left: -140px;
+            animation-duration: 40s;
+            animation-delay: 10s;
+        }
+
+        .cloud3::before {
+            width: 70px;
+            height: 70px;
+            top: -35px;
+            left: 22px;
+        }
+
+        .cloud3::after {
+            width: 90px;
+            height: 90px;
+            top: -45px;
+            left: 70px;
+        }
+
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            animation: rain-fall linear infinite;
+        }
+
+        @keyframes cloud-float {
+            0% {
+                transform: translateX(-100px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 100px));
+            }
+        }
+
+        @keyframes rain-fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .sun {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #ffde59;
+            border-radius: 50%;
+            top: 70px;
+            right: 70px;
+            box-shadow: 0 0 20px #ffde59, 0 0 60px #ffde59;
+            animation: sun-pulse 4s infinite alternate;
+            opacity: 0.8;
+        }
+        
+        @keyframes sun-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px #ffde59, 0 0 40px #ffde59;
+            }
+            100% {
+                transform: scale(1.1);
+                box-shadow: 0 0 30px #ffde59, 0 0 60px #ffde59;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(to right, var(--header-color), var(--dark-color));
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        /* Add subtle underline to header */
+        .header-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-sec {
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px 0 0 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-box:focus {
+            background: white;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        #searchBtn {
+            padding: 15px 20px;
+            background: var(--header-color);
+            border: none;
+            border-radius: 0 50px 50px 0;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #searchBtn:hover {
+            background: var(--dark-color);
+            transform: translateX(3px);
+        }
+
+        .location-not-found {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .location-not-found h1 {
+            font-size: 20px;
+            color: #ff5252;
+            margin-bottom: 15px;
+        }
+
+        .location-not-found img {
+            width: 80%;
+            max-width: 250px;
+        }
+
+        .weather-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .weather-box {
+            margin-bottom: 30px;
+            position: relative;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .weather-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--header-color);
+            margin-bottom: 5px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .description {
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-transform: capitalize;
+            color: var(--dark-color);
+            opacity: 0.9;
+        }
+
+        .weather-details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .weather-details:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-5px);
+        }
+
+        .humidity, .wind {
+            display: flex;
+            align-items: center;
+        }
+
+        .humidity i, .wind i {
+            font-size: 2.5rem;
+            color: var(--header-color);
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .humidity:hover i, .wind:hover i {
+            transform: scale(1.2);
+        }
+
+        .text span {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--header-color);
+        }
+
+        .text p {
+            font-size: 1rem;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        /* Add responsive design */
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .temperature {
+                font-size: 3rem;
+            }
+            
+            .description {
+                font-size: 1.2rem;
+            }
+            
+            .weather-details {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .sun {
+                width: 70px;
+                height: 70px;
+                top: 50px;
+                right: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="sun"></div>
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+    </div>
+
+    
+
+    <div class="container">
+        <div class="header-sec">
+            <div class="search-box">
+                <input type="text" placeholder="Enter your location" class="input-box">
+                <button id="searchBtn">
+                    <i class='bx bx-search'></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="location-not-found">
+            <h1>Sorry, Location not found!</h1>
+            <img src="{% static 'weather_forecast/images/404.png' %}" alt="404 Error">
+        </div>
+
+        <div class="weather-body">
+            <div class="weather-box">
+                <p class="temperature">0 <sup>°C</sup></p>
+                <p class="description">light rain</p>
+            </div>
+
+            <div class="weather-details">
+                <div class="humidity">
+                    <i class='bx bx-water'></i>
+                    <div class="text">
+                        <span id="humidity">45%</span>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+
+                <div class="wind">
+                    <i class='bx bx-wind'></i>
+                    <div class="text">
+                        <span id="wind-speed">12Km/H</span>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate rain drops with JavaScript -->
+    <script>
+        // Create animated rain drops
+        function createRaindrops() {
+            const animatedBg = document.querySelector('.animated-bg');
+            
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                
+                // Random positioning
+                drop.style.left = Math.random() * 100 + 'vw';
+                
+                // Random animation duration
+                const duration = Math.random() * 2 + 1;
+                drop.style.animationDuration = duration + 's';
+                
+                // Random animation delay
+                drop.style.animationDelay = Math.random() * 5 + 's';
+                
+                animatedBg.appendChild(drop);
+            }
+        }
+        
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            createRaindrops();
+        });
+    </script>
+
+    <!-- Static JS -->
+    <script src="{% static 'weather_forecast/js/script.js' %}"></script>
+</body>
+
+</html>

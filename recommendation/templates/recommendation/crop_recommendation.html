@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Enhanced background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%2343a047' fill-opacity='0.05' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'%3E%3C/path%3E%3C/svg%3E"),
+                linear-gradient(135deg, #f0f7f0 0%, #e8f5e9 50%, #d7ecd8 100%);
+            z-index: -2;
+        }
+        
+        /* Floating leaf elements */
+        .floating-leaf {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2343a047' opacity='0.2'%3E%3Cpath d='M17,8C8,10,5.9,16.17,3.82,21.34L5.71,22l1-2.3A12.15,12.15,0,0,0,19,12.45V8H17Z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: -1;
+            animation: float 15s linear infinite;
+        }
+        
+        .leaf1 {
+            top: 10%;
+            left: 10%;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+        
+        .leaf2 {
+            top: 20%;
+            right: 10%;
+            animation-duration: 18s;
+            animation-delay: 2s;
+        }
+        
+        .leaf3 {
+            bottom: 20%;
+            left: 15%;
+            animation-duration: 20s;
+            animation-delay: 5s;
+        }
+        
+        .leaf4 {
+            bottom: 10%;
+            right: 20%;
+            animation-duration: 22s;
+            animation-delay: 3s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(-200px) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+            width: 100%;
+            max-width: 550px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeIn 0.8s 0.2s forwards;
+            position: relative;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #2e7d32 0%, #66bb6a 50%, #81c784 100%);
+        }
+        
+        /* Header section */
+        .header {
+            text-align: center;
+            padding: 40px 30px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo {
+            font-size: 36px;
+            margin-bottom: 5px;
+            color: #2e7d32;
+            animation: pulse 6s infinite;
+        }
+        
+        .header h1 {
+            font-size: 30px;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .header p {
+            font-size: 15px;
+            color: #555;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Decorative elements */
+        .leaf-decoration {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(129, 199, 132, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .leaf-decoration.top-right {
+            top: -60px;
+            right: -60px;
+        }
+        
+        .leaf-decoration.bottom-left {
+            bottom: -70px;
+            left: -70px;
+            width: 140px;
+            height: 140px;
+        }
+        
+        /* Form section */
+        .form-container {
+            padding: 10px 40px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .input-group:nth-child(1) { animation-delay: 0.3s; }
+        .input-group:nth-child(2) { animation-delay: 0.4s; }
+        .input-group:nth-child(3) { animation-delay: 0.5s; }
+        .input-group:nth-child(4) { animation-delay: 0.6s; }
+        .input-group:nth-child(5) { animation-delay: 0.7s; }
+        .input-group:nth-child(6) { animation-delay: 0.8s; }
+        .input-group:nth-child(7) { animation-delay: 0.9s; }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2e7d32;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background-color: #f9fdfb;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            color: #333;
+            letter-spacing: 0.3px;
+        }
+        
+        .input-group input:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+            background-color: #fff;
+        }
+        
+        .input-group:focus-within label {
+            color: #1b5e20;
+            font-weight: 600;
+        }
+        
+        /* Remove the form grid layout */
+        .form-grid {
+            display: block; /* Changed from grid to block */
+        }
+        
+        /* Button styles */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeIn 0.5s 1s forwards;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.6s ease-out;
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+        
+        /* Result section */
+        .result {
+            margin-top: 30px;
+            padding: 25px 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-left: 5px solid #43a047;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.6s 0.3s forwards;
+        }
+        
+        .result-icon {
+            margin-right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .result-text {
+            flex: 1;
+        }
+        
+        .result-text strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #1b5e20;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+        
+        .result-text span {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2e7d32;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Input field icons */
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7cb342;
+            font-size: 18px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 95%;
+            }
+            
+            .header {
+                padding: 30px 20px 20px;
+            }
+            
+            .form-container {
+                padding: 10px 25px 30px;
+            }
+            
+            .result-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+        }
+        
+        .separator {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.5), transparent);
+            margin: 15px 0 25px;
+            width: 100%;
+        }
+        
+        .input-unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 14px;
+        }
+        
+        /* Farm field pattern in background */
+        .farm-pattern {
+            position: fixed;
+            width: 100%;
+            height: 200px;
+            bottom: 0;
+            left: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Cpath fill='%2343a047' fill-opacity='0.07' d='M0,15 C30,15 30,0 60,0 C90,0 90,15 100,15 L100,30 L0,30 Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: 100px 30px;
+            background-repeat: repeat-x;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background decorative elements -->
+    <div class="floating-leaf leaf1"></div>
+    <div class="floating-leaf leaf2"></div>
+    <div class="floating-leaf leaf3"></div>
+    <div class="floating-leaf leaf4"></div>
+    <div class="farm-pattern"></div>
+    
+    <div class="container">
+        <div class="leaf-decoration top-right"></div>
+        <div class="leaf-decoration bottom-left"></div>
+        
+        <div class="header">
+            <div class="logo">🌱</div>
+            <h1>Crop Recommendation</h1>
+            <p>Enter your soil and climate parameters to discover the optimal crop for your land</p>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <!-- Removed the form-grid div wrapper and put all input groups in a linear layout -->
+                <div class="input-group">
+                    <label for="nitrogen">Nitrogen (N)</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="nitrogen" name="nitrogen" required placeholder="e.g., 80">
+                        <span class="input-unit">kg/ha</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="phosphorus">Phosphorus (P)</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="phosphorus" name="phosphorus" required placeholder="e.g., 40">
+                        <span class="input-unit">kg/ha</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="potassium">Potassium (K)</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="potassium" name="potassium" required placeholder="e.g., 50">
+                        <span class="input-unit">kg/ha</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="temperature">Temperature</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="temperature" name="temperature" required placeholder="e.g., 25">
+                        <span class="input-unit">°C</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="humidity">Humidity</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="humidity" name="humidity" required placeholder="e.g., 65">
+                        <span class="input-unit">%</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="ph">pH Level</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="ph" name="ph" required placeholder="e.g., 6.5">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="rainfall">Rainfall</label>
+                    <div class="input-with-icon">
+                        <input type="number" step="any" id="rainfall" name="rainfall" required placeholder="e.g., 120">
+                        <span class="input-unit">mm</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Recommend Ideal Crop</button>
+            </form>
+            
+            {% if recommended_crop %}
+            <div class="result">
+                <div class="result-icon">🌾</div>
+                <div class="result-text">
+                    <strong>Recommended Crop</strong>
+                    <span>{{ recommended_crop }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSens</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+<!-- navbar section starts -->
+<header class="header">
+    <div class="logo">
+        <h1>AgriSens</h1>
+    </div>
+
+    <nav class="navbar">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="{% url 'logout' %}" class="btnn">LOGOUT</a>
+
+    </nav>
+
+    <div class="fas fa-bars" id="menu-btn"></div>
+</header>
+<!-- navbar section ends -->
+
+<!-- home section starts -->
+<section class="home" id="home">
+    <div class="content">
+        <h1>YOUR SMART FARMING ASSISTANT</h1>
+        <p>Smart Crops, Smart Choices with AgriSens!</p>
+    </div>
+
+    <div class="image">
+        <img class="image" src="{% static 'images/field.jpg' %}" alt="heading-image">
+    </div>
+</section>
+<!-- home section ends -->
+
+<!-- features section starts -->
+<section class="features" id="features">
+    <div class="heading">
+        <h1>Features</h1>
+        <p>
+            AgriSens provides farmers with essential tools for smarter farming. 
+            It offers personalized crop recommendations based on soil and climate, 
+            helps identify plant diseases through image analysis, and provides 
+            real-time weather forecasts. The app also includes features for crop 
+            planning and guidance, ensuring optimal farming decisions for better 
+            yields and healthier crops.
+        </p>
+    </div>
+
+    <!-- Updated the button to use Django URL template tag -->
+    <div class="button-container0">
+        <a href="{% url 'crop_recommendation' %}" class="buttonn">Crop Recommendations</a>
+        <a href="{% url 'weather_forecast' %}" class="buttonn">Today's Weather Forecast</a>
+        <a href="{% url 'smart_farming_guide' %}" class="buttonn">Smart Farming Guide</a>
+
+    </div>
+
+    <div class="row">
+        <!-- Feature 1: Weather Forecast -->
+        <div class="image">
+            <img src="{% static 'images/weather.jpg' %}" alt="crop-planning" class="rounded-corner-image">
+        </div>
+
+        <div class="content">
+            <h1>Weather Forecast</h1>
+            <p>
+                Plan Your Farming With Precision! Check Real-Time Weather Insights 
+                On Temperature, Humidity, And More. Integrated With Our 
+                Crop-Prediction Model For Optimal Decisions. Explore Historical 
+                Data, Get Alerts, And Access Educational Resources.
+            </p>
+            <a href="#" class="all-btn">More Info</a>
+        </div>
+
+        <!-- Feature 2: Smart Crop Planning -->
+        <div class="content">
+            <h1>Smart Crop Planning</h1>
+            <p>
+                Harness the power of data analysis to predict crop suitability, 
+                providing insights into optimal cultivation conditions. AgriSens 
+                optimizes farming decisions based on comprehensive factors like soil 
+                quality, weather, and more.
+            </p>
+            <a href="#" class="all-btn">More Info</a>
+        </div>
+
+        <div class="image">
+            <img src="{% static 'images/crop-planning.jpg' %}" alt="crop-planning" class="rounded-corner-image">
+        </div>
+
+        <!-- Feature 3: Smart Guidance -->
+        <div class="image">
+            <img src="{% static 'images/guide.png' %}" alt="ranked-recommendations" class="rounded-corner-image">
+        </div>
+
+        <div class="content">
+            <h1>Smart Farming, Simple Guidance</h1>
+            <p>
+                Smart Crop Guide offers a simple, step-by-step plan for growing 
+                crops. It provides expert planting tips, tracks growth stages, and 
+                sends watering reminders. The app also gives pest control advice, 
+                harvest timing, weather updates, and fertilizer recommendations to 
+                ensure healthy crops.
+            </p>
+            <a href="#" class="all-btn">More Info</a>
+        </div>
+
+    </div>
+</section>
+<!-- features section ends -->
+
+</body>
+</html>
