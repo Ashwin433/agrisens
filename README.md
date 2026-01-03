@@ -2,6 +2,9 @@
 
 AgriSens is a Django-based web application that provides intelligent crop recommendations and weather forecasting for farmers. The system uses machine learning models to suggest the best crops based on soil conditions and provides weather forecasts to aid in agricultural planning.
 
+## Live Demo
+Check out the live application here: [https://agrisens-1-z158.onrender.com/](https://agrisens-1-z158.onrender.com/)
+
 ## Features
 
 - **Crop Recommendation**: Get AI-powered crop suggestions based on soil parameters
