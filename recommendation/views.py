@@ -1,9 +1,11 @@
+import os
+from django.conf import settings
 import pickle
 from django.shortcuts import render
 from django.http import JsonResponse
 
 # Load your trained model (update the path if needed)
-MODEL_PATH = 'C:/Users/ashwi/agrisens/recommendation/models/RandomForest.pkl'
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'recommendation/models/RandomForest.pkl')
 
 with open(MODEL_PATH, 'rb') as model_file:
     model = pickle.load(model_file)
