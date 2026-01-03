@@ -17,7 +17,7 @@ body {
     background: rgba(255, 255, 255, 0.95);
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     animation: fadeIn 0.8s ease-in-out;
 }
@@ -34,7 +34,8 @@ body {
 .form-container input[type="text"],
 .form-container input[type="password"],
 .form-container input[type="email"],
-.form-container input[type="tel"] {   /* Add this line */
+.form-container input[type="tel"] {
+    /* Add this line */
     width: 100%;
     padding: 12px;
     margin: 10px 0;
@@ -83,6 +84,7 @@ body {
         transform: translateY(-30px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
